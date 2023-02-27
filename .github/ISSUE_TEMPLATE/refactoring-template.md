@@ -1,9 +1,9 @@
 ---
-name: 'Refactor: '
+name: Refactoring Template
 about: 리팩터링
-title: ''
-labels: ''
-assignees: ''
+title: "[Refactor] "
+labels: refactor
+assignees: JeYeongR
 
 ---
 
