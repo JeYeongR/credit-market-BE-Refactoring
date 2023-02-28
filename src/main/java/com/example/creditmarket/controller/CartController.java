@@ -29,7 +29,7 @@ public class CartController {
     public ResponseEntity<List<CartResponseDTO>> selectCartList(Authentication authentication) {
         List<CartResponseDTO> cartList = cartService.selectCartList(authentication.getName());
 
-        return ResponseEntity.ok().body(cartList);
+        return ResponseEntity.ok(cartList);
     }
 
     @DeleteMapping
