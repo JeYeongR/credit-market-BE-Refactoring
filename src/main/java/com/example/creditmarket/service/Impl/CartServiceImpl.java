@@ -55,10 +55,7 @@ public class CartServiceImpl implements CartService {
 
     @Override
     public List<CartResponseDTO> selectCartList(String userEmail) {
-        EntityUser user = userRepository.findById(userEmail)
-                .orElseThrow(() -> new AppException(ErrorCode.USERMAIL_NOT_FOUND, userEmail + " 존재하지 않는 회원입니다."));
-
-        List<EntityCart> cartList = cartRepository.findByUserOrderByCartIdDesc(user);
+        List<EntityCart> cartList = cartRepository.findByUser_UserEmailOrderByCartIdDesc(userEmail);
 
         return cartList.stream()
                 .map(this::checkedFavorite)
@@ -85,11 +82,5 @@ public class CartServiceImpl implements CartService {
         CartResponseDTO responseDTO = CartResponseDTO.builder()
                 .cart(cart)
                 .build();
-
-        if (favoriteRepository.existsByUserAndFproduct(cart.getUser(), cart.getFproduct())) {
-            responseDTO.setFavorite(true);
-        }
-
-        return responseDTO;
     }
 }
