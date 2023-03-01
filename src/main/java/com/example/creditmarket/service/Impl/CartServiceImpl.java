@@ -79,8 +79,11 @@ public class CartServiceImpl implements CartService {
 
     //장바구니에 관심 상품표시를 체크하는 메서드
     private CartResponseDTO checkedFavorite(EntityCart cart) {
-        CartResponseDTO responseDTO = CartResponseDTO.builder()
+        boolean isFavorite = favoriteRepository.existsByUserAndFproduct(cart.getUser(), cart.getFproduct());
+
+        return CartResponseDTO.builder()
                 .cart(cart)
+                .favorite(isFavorite)
                 .build();
     }
 }
