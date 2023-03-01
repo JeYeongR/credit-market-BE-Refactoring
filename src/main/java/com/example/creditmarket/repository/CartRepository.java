@@ -12,7 +12,7 @@ import java.util.Optional;
 @Repository
 public interface CartRepository extends JpaRepository<EntityCart, Long> {
 
-    List<EntityCart> findByUserOrderByCartIdDesc(EntityUser user);
+    List<EntityCart> findByUser_UserEmailOrderByCartIdDesc(String userEmail);
 
     Optional<EntityCart> findByUserAndCartId(EntityUser user, Long cartId);
 

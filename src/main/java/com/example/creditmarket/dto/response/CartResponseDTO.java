@@ -19,15 +19,12 @@ public class CartResponseDTO {
 
     private boolean favorite;
 
-    public void setFavorite(boolean favorite) {
-        this.favorite = favorite;
-    }
-
     @Builder
-    public CartResponseDTO(EntityCart cart) {
+    public CartResponseDTO(EntityCart cart, boolean favorite) {
         this.cartId = cart.getCartId();
         this.companyName = cart.getFproduct().getFproduct_company_name();
         this.productName = cart.getFproduct().getFproduct_name();
         this.productId = cart.getFproduct().getFproduct_id();
+        this.favorite = favorite;
     }
 }
