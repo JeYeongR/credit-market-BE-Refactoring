@@ -33,22 +33,19 @@ public class CartServiceImpl implements CartService {
     @Override
     public String saveCart(CartSaveRequestDTO cartRequestDTO, String userEmail) {
         EntityUser user = userRepository.findById(userEmail)
-                .orElseThrow(() -> new AppException(ErrorCode.USERMAIL_NOT_FOUND, userEmail + " 존재하지 않는 회원입니다."));
+                .orElseThrow(() -> new AppException(ErrorCode.USERMAIL_NOT_FOUND));
 
-        String productId = cartRequestDTO.getProductId();
-        EntityFProduct fProduct = fProductRespository.findById(productId)
-                .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND, productId + " 존재하지 않는 상품입니다."));
+        EntityFProduct fProduct = fProductRespository.findById(cartRequestDTO.getProductId())
+                .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
 
         if (cartRepository.existsByUserAndFproduct(user, fProduct)) {
             return "isDupl";
         }
 
-        EntityCart cart = EntityCart.builder()
+        cartRepository.save(EntityCart.builder()
                 .user(user)
                 .fproduct(fProduct)
-                .build();
-
-        cartRepository.save(cart);
+                .build());
 
         return "success";
     }

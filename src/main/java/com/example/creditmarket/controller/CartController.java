@@ -20,9 +20,10 @@ public class CartController {
 
     @PostMapping
     public ResponseEntity<String> saveCart(@RequestBody CartSaveRequestDTO cartRequestDTO, Authentication authentication) {
-        String result = cartService.saveCart(cartRequestDTO, authentication.getName());
+        String userEmail = authentication.getName();
+        String result = cartService.saveCart(cartRequestDTO, userEmail);
 
-        return ResponseEntity.ok().body(result);
+        return ResponseEntity.ok(result);
     }
 
     @GetMapping
