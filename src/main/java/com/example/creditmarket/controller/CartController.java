@@ -36,8 +36,9 @@ public class CartController {
 
     @DeleteMapping
     public ResponseEntity<String> deleteCart(@RequestBody CartDeleteRequestDTO cartDeleteRequestDTO, Authentication authentication) {
-        String result = cartService.deleteCart(cartDeleteRequestDTO, authentication.getName());
+        String userEmail = authentication.getName();
+        String result = cartService.deleteCart(cartDeleteRequestDTO, userEmail);
 
-        return ResponseEntity.ok().body(result);
+        return ResponseEntity.ok(result);
     }
 }
