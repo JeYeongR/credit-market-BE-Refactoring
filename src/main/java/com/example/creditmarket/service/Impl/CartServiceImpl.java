@@ -31,9 +31,13 @@ public class CartServiceImpl implements CartService {
     private final FavoriteRepository favoriteRepository;
 
     @Override
-    public String saveCart(CartSaveRequestDTO cartRequestDTO, String userEmail) {
+    public String addCart(CartSaveRequestDTO cartRequestDTO, String userEmail) {
         EntityUser user = userRepository.findById(userEmail)
                 .orElseThrow(() -> new AppException(ErrorCode.USERMAIL_NOT_FOUND));
+
+        if (cartRequestDTO.getProductId() == null) {
+            throw new AppException(ErrorCode.CAN_NOT_BE_NULL);
+        }
 
         EntityFProduct fProduct = fProductRespository.findById(cartRequestDTO.getProductId())
                 .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
