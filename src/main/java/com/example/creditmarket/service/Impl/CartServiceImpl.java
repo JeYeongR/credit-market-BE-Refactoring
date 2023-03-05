@@ -61,13 +61,17 @@ public class CartServiceImpl implements CartService {
 
     @Override
     public String deleteCart(CartDeleteRequestDTO cartDeleteRequestDTO, String userEmail) {
+        if (cartDeleteRequestDTO.getCartIds() == null) { //처음부터 null을 못 오게 하면 안될까? Bean Validation
+            throw new AppException(ErrorCode.CAN_NOT_BE_NULL);
+        }
+
         EntityUser user = userRepository.findById(userEmail)
-                .orElseThrow(() -> new AppException(ErrorCode.USERMAIL_NOT_FOUND, userEmail + " 존재하지 않는 회원입니다."));
+                .orElseThrow(() -> new AppException(ErrorCode.USERMAIL_NOT_FOUND));
 
         List<EntityCart> cartList = cartDeleteRequestDTO.toEntity();
 
         cartList.forEach(cart -> cartRepository.findByUserAndCartId(user, cart.getCartId())
-                .orElseThrow(() -> new AppException(ErrorCode.CART_NOT_FOUND, cart.getCartId() + " 존재하지 않는 장바구니 상품입니다.")));
+                .orElseThrow(() -> new AppException(ErrorCode.CART_NOT_FOUND)));
 
         cartRepository.deleteAll(cartList);
 
