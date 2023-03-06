@@ -35,10 +35,6 @@ public class CartServiceImpl implements CartService {
         EntityUser user = userRepository.findById(userEmail)
                 .orElseThrow(() -> new AppException(ErrorCode.USERMAIL_NOT_FOUND));
 
-        if (cartRequestDTO.getProductId() == null) {
-            throw new AppException(ErrorCode.CAN_NOT_BE_NULL);
-        }
-
         EntityFProduct fProduct = fProductRespository.findById(cartRequestDTO.getProductId())
                 .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
 
@@ -65,10 +61,6 @@ public class CartServiceImpl implements CartService {
 
     @Override
     public String deleteCart(CartDeleteRequestDTO cartDeleteRequestDTO, String userEmail) {
-        if (cartDeleteRequestDTO.getCartIds() == null) { //처음부터 null을 못 오게 하면 안될까? Bean Validation
-            throw new AppException(ErrorCode.CAN_NOT_BE_NULL);
-        }
-
         EntityUser user = userRepository.findById(userEmail)
                 .orElseThrow(() -> new AppException(ErrorCode.USERMAIL_NOT_FOUND));
 

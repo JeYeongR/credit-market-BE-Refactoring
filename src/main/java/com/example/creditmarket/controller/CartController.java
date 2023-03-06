@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -19,9 +20,9 @@ public class CartController {
     private final CartService cartService;
 
     @PostMapping
-    public ResponseEntity<String> saveCart(@RequestBody CartSaveRequestDTO cartRequestDTO, Authentication authentication) {
+    public ResponseEntity<String> addCart(@Valid @RequestBody CartSaveRequestDTO cartRequestDTO, Authentication authentication) {
         String userEmail = authentication.getName();
-        String result = cartService.saveCart(cartRequestDTO, userEmail);
+        String result = cartService.addCart(cartRequestDTO, userEmail);
 
         return ResponseEntity.ok(result);
     }
@@ -35,7 +36,7 @@ public class CartController {
     }
 
     @DeleteMapping
-    public ResponseEntity<String> deleteCart(@RequestBody CartDeleteRequestDTO cartDeleteRequestDTO, Authentication authentication) {
+    public ResponseEntity<String> deleteCart(@Valid @RequestBody CartDeleteRequestDTO cartDeleteRequestDTO, Authentication authentication) {
         String userEmail = authentication.getName();
         String result = cartService.deleteCart(cartDeleteRequestDTO, userEmail);
 
