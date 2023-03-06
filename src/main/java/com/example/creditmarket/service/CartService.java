@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface CartService {
 
-    String saveCart(CartSaveRequestDTO cartRequestDTO, String userEmail);
+    String addCart(CartSaveRequestDTO cartRequestDTO, String userEmail);
 
     List<CartResponseDTO> selectCartList(String userEmail);
 
