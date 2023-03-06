@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 public class CartDeleteRequestDTO {
 
     @NotNull
-    List<Long> cartIds;
+    private List<Long> cartIds;
 
     public List<EntityCart> toEntity() {
         return cartIds.stream()
