@@ -1,19 +1,24 @@
 package com.example.creditmarket.service.Impl;
 
-import com.example.creditmarket.dto.request.FavoriteRequestDto;
 import com.example.creditmarket.dto.request.OrderRequestDTO;
 import com.example.creditmarket.dto.request.OrderSaveRequestDTO;
+import com.example.creditmarket.dto.response.OrderListResponseDTO;
+import com.example.creditmarket.dto.response.OrderResponseDTO;
 import com.example.creditmarket.dto.response.ProductDetailResponseDTO;
 import com.example.creditmarket.dto.response.RecommendResponseDTO;
 import com.example.creditmarket.entity.EntityFProduct;
-import com.example.creditmarket.entity.EntityFavorite;
 import com.example.creditmarket.entity.EntityOption;
+import com.example.creditmarket.entity.EntityOrder;
 import com.example.creditmarket.entity.EntityUser;
+import com.example.creditmarket.exception.AppException;
+import com.example.creditmarket.exception.ErrorCode;
 import com.example.creditmarket.repository.*;
-import com.example.creditmarket.service.ProductService;
+import com.example.creditmarket.service.OrderService;
 import io.jsonwebtoken.Jwts;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 
@@ -24,7 +29,7 @@ import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
-public class ProductServiceImpl implements ProductService {
+public class OrderServiceImpl implements OrderService {
 
     private final FProductRespository productRepository;
     private final OrderRepository orderRepository;
@@ -34,22 +39,6 @@ public class ProductServiceImpl implements ProductService {
 
     @Value("${jwt.token.secret}")
     private String secretKey;
-
-    /**
-     * 상품 상세정보 출력(상품명, 개요, 대상, 한도, 금리, 찜 여부 등의 상세정보 출력)
-     */
-    public ProductDetailResponseDTO getProductDetail(String id, HttpServletRequest request) {
-        EntityFProduct product = productRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("해당 아이디를 찾을수 없습니다"));
-        EntityOption option = optionRepository.findByProductId(id);
-        if (getEmailFromToken(request) == null) {
-            return new ProductDetailResponseDTO(product, option, false);
-        }
-        String userEmail = getEmailFromToken(request);
-        EntityUser user = userRepository.findByUserEmail(userEmail).orElseThrow(
-                () -> new IllegalArgumentException("해당 아이디를 찾을수 없습니다."));
-        boolean isFavorite = favoriteRepository.existsByUserAndFproduct(user, product);
-        return new ProductDetailResponseDTO(product, option, isFavorite);
-    }
 
     /**
      * 상품 구매
@@ -74,6 +63,66 @@ public class ProductServiceImpl implements ProductService {
         return "success";
     }
 
+    public OrderListResponseDTO selectOrderList(int page, String userEmail) {
+        EntityUser user = userRepository.findById(userEmail)
+                .orElseThrow(() -> new AppException(ErrorCode.USERMAIL_NOT_FOUND));
+
+        if (page < 1) {
+            throw new AppException(ErrorCode.PAGE_INDEX_ZERO);
+        }
+        PageRequest pageRequest = PageRequest.of(page - 1, 10, Sort.by("orderId").descending());
+
+        List<EntityOrder> orders = orderRepository.findByUser(user, pageRequest);
+
+        List<OrderResponseDTO> list = new ArrayList<>();
+        for (EntityOrder order : orders) {
+            OrderResponseDTO dto = OrderResponseDTO.builder()
+                    .order(order)
+                    .option(optionRepository.findByProductId(order.getFproduct().getFproduct_id()))
+                    .build();
+
+            list.add(dto);
+        }
+
+        int totalNum = orderRepository.countByUser(user);
+
+        return OrderListResponseDTO.builder()
+                .list(list)
+                .totalNum(totalNum)
+                .build();
+    }
+
+    @Override
+    public String updateOrder(Long orderId, String userEmail) {
+        EntityUser user = userRepository.findById(userEmail)
+                .orElseThrow(() -> new AppException(ErrorCode.USERMAIL_NOT_FOUND));
+
+        EntityOrder order = orderRepository.findByUserAndOrderId(user, orderId)
+                .orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_FOUND));
+
+        order.setOrderStatus(0);
+
+        orderRepository.save(order);
+
+        return "success";
+    }
+
+    /**
+     * 상품 상세정보 출력(상품명, 개요, 대상, 한도, 금리, 찜 여부 등의 상세정보 출력)
+     */
+    public ProductDetailResponseDTO getProductDetail(String id, HttpServletRequest request) {
+        EntityFProduct product = productRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("해당 아이디를 찾을수 없습니다"));
+        EntityOption option = optionRepository.findByProductId(id);
+        if (getEmailFromToken(request) == null) {
+            return new ProductDetailResponseDTO(product, option, false);
+        }
+        String userEmail = getEmailFromToken(request);
+        EntityUser user = userRepository.findByUserEmail(userEmail).orElseThrow(
+                () -> new IllegalArgumentException("해당 아이디를 찾을수 없습니다."));
+        boolean isFavorite = favoriteRepository.existsByUserAndFproduct(user, product);
+        return new ProductDetailResponseDTO(product, option, isFavorite);
+    }
+
     /**
      * 추천 게시글
      */
@@ -93,29 +142,6 @@ public class ProductServiceImpl implements ProductService {
             }
         }
         return list;
-    }
-
-    /**
-     * 찜 추가 & 취소
-     */
-    public String favoriteService(String productId, String userEmail) {
-        EntityFProduct product = productRepository.findById(productId).orElseThrow(() ->
-                new IllegalArgumentException("해당 상품을 찾을수 없습니다"));
-        EntityUser user = userRepository.findById(userEmail).orElseThrow(() ->
-                new IllegalArgumentException("해당 회원을 찾을수 없습니다."));
-        try {
-            EntityFavorite favorite = favoriteRepository.findEntityFavoriteByFproductAndUser(product, user);
-            if (favorite == null) {
-                FavoriteRequestDto dto = new FavoriteRequestDto();
-                favoriteRepository.save(dto.toEntity(user, product));
-            } else {
-                favoriteRepository.deleteById(favorite.getFavoriteId());
-            }
-            return "success";
-        } catch (Exception e) {
-            e.printStackTrace();
-            return "fail";
-        }
     }
 
     public String getEmailFromToken(HttpServletRequest request) {
