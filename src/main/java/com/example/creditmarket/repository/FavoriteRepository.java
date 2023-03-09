@@ -16,9 +16,8 @@ public interface FavoriteRepository extends JpaRepository<EntityFavorite, Long> 
 
     boolean existsByUserAndFproduct(EntityUser user, EntityFProduct fproduct);
 
-    EntityFavorite findEntityFavoriteByFproductAndUser(EntityFProduct fproduct, EntityUser user);
+    EntityFavorite findByUserAndFproduct(EntityUser user, EntityFProduct fproduct);
 
     int countByUser(EntityUser user);
-
 }
 

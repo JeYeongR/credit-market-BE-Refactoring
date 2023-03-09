@@ -1,7 +1,7 @@
 package com.example.creditmarket.service.Impl;
 
 import com.example.creditmarket.dto.request.CartDeleteRequestDTO;
-import com.example.creditmarket.dto.request.CartSaveRequestDTO;
+import com.example.creditmarket.dto.request.AddRequestDTO;
 import com.example.creditmarket.dto.response.CartResponseDTO;
 import com.example.creditmarket.entity.EntityCart;
 import com.example.creditmarket.entity.EntityFProduct;
@@ -31,11 +31,11 @@ public class CartServiceImpl implements CartService {
     private final FavoriteRepository favoriteRepository;
 
     @Override
-    public String addCart(CartSaveRequestDTO cartRequestDTO, String userEmail) {
+    public String addCart(AddRequestDTO addRequestDTO, String userEmail) {
         EntityUser user = userRepository.findById(userEmail)
                 .orElseThrow(() -> new AppException(ErrorCode.USERMAIL_NOT_FOUND));
 
-        EntityFProduct fProduct = fProductRespository.findById(cartRequestDTO.getProductId())
+        EntityFProduct fProduct = fProductRespository.findById(addRequestDTO.getProductId())
                 .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
 
         if (cartRepository.existsByUserAndFproduct(user, fProduct)) {

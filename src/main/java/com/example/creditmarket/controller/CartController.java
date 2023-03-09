@@ -1,7 +1,7 @@
 package com.example.creditmarket.controller;
 
 import com.example.creditmarket.dto.request.CartDeleteRequestDTO;
-import com.example.creditmarket.dto.request.CartSaveRequestDTO;
+import com.example.creditmarket.dto.request.AddRequestDTO;
 import com.example.creditmarket.dto.response.CartResponseDTO;
 import com.example.creditmarket.service.CartService;
 import lombok.RequiredArgsConstructor;
@@ -20,9 +20,9 @@ public class CartController {
     private final CartService cartService;
 
     @PostMapping
-    public ResponseEntity<String> addCart(@Valid @RequestBody CartSaveRequestDTO cartRequestDTO, Authentication authentication) {
+    public ResponseEntity<String> addCart(@Valid @RequestBody AddRequestDTO addRequestDTO, Authentication authentication) {
         String userEmail = authentication.getName();
-        String result = cartService.addCart(cartRequestDTO, userEmail);
+        String result = cartService.addCart(addRequestDTO, userEmail);
 
         return ResponseEntity.ok(result);
     }

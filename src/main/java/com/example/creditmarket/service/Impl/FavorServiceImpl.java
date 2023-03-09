@@ -1,17 +1,17 @@
 package com.example.creditmarket.service.Impl;
 
-import com.example.creditmarket.dto.request.FavoriteRequestDto;
+import com.example.creditmarket.dto.request.AddRequestDTO;
 import com.example.creditmarket.dto.response.FavoriteListResponseDTO;
 import com.example.creditmarket.dto.response.FavoriteResponseDTO;
-import com.example.creditmarket.dto.response.OrderListResponseDTO;
-import com.example.creditmarket.dto.response.OrderResponseDTO;
 import com.example.creditmarket.entity.EntityFProduct;
 import com.example.creditmarket.entity.EntityFavorite;
-import com.example.creditmarket.entity.EntityOrder;
 import com.example.creditmarket.entity.EntityUser;
 import com.example.creditmarket.exception.AppException;
 import com.example.creditmarket.exception.ErrorCode;
-import com.example.creditmarket.repository.*;
+import com.example.creditmarket.repository.FProductRespository;
+import com.example.creditmarket.repository.FavoriteRepository;
+import com.example.creditmarket.repository.OptionRepository;
+import com.example.creditmarket.repository.UserRepository;
 import com.example.creditmarket.service.FavorService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
@@ -32,26 +32,28 @@ public class FavorServiceImpl implements FavorService {
     private final OptionRepository optionRepository;
     private final FProductRespository productRepository;
 
-    public String favoriteService(String productId, String userEmail) {
-        EntityFProduct product = productRepository.findById(productId).orElseThrow(() ->
-                new IllegalArgumentException("해당 상품을 찾을수 없습니다"));
-        EntityUser user = userRepository.findById(userEmail).orElseThrow(() ->
-                new IllegalArgumentException("해당 회원을 찾을수 없습니다."));
-        try {
-            EntityFavorite favorite = favoriteRepository.findEntityFavoriteByFproductAndUser(product, user);
-            if (favorite == null) {
-                FavoriteRequestDto dto = new FavoriteRequestDto();
-                favoriteRepository.save(dto.toEntity(user, product));
-            } else {
-                favoriteRepository.deleteById(favorite.getFavoriteId());
-            }
-            return "success";
-        } catch (Exception e) {
-            e.printStackTrace();
-            return "fail";
+    @Override
+    public String toggleFavorite(AddRequestDTO addRequestDTO, String userEmail) {
+        EntityUser user = userRepository.findById(userEmail)
+                .orElseThrow(() -> new AppException(ErrorCode.USERMAIL_NOT_FOUND));
+
+        EntityFProduct product = productRepository.findById(addRequestDTO.getProductId())
+                .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
+
+        EntityFavorite favorite = favoriteRepository.findByUserAndFproduct(user, product);
+        if (favorite == null) {
+            favoriteRepository.save(EntityFavorite.builder()
+                    .user(user)
+                    .fproduct(product)
+                    .build());
+        } else {
+            favoriteRepository.delete(favorite);
         }
+
+        return "success";
     }
 
+    @Override
     public FavoriteListResponseDTO selectFavoriteList(int page, String userEmail) {
         EntityUser user = userRepository.findById(userEmail)
                 .orElseThrow(() -> new AppException(ErrorCode.USERMAIL_NOT_FOUND));
