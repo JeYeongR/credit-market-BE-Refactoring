@@ -7,7 +7,7 @@ import javax.validation.constraints.NotBlank;
 
 @Setter
 @Getter
-public class CartSaveRequestDTO {
+public class AddRequestDTO {
 
     @NotBlank
     private String productId;
