@@ -19,8 +19,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -55,30 +55,27 @@ public class FavorServiceImpl implements FavorService {
 
     @Override
     public FavoriteListResponseDTO selectFavoriteList(int page, String userEmail) {
-        EntityUser user = userRepository.findById(userEmail)
-                .orElseThrow(() -> new AppException(ErrorCode.USERMAIL_NOT_FOUND));
+        final int PAGE_SIZE = 10;
 
         if (page < 1) {
             throw new AppException(ErrorCode.PAGE_INDEX_ZERO);
         }
-        PageRequest pageRequest = PageRequest.of(page - 1, 10, Sort.by("favoriteId").descending());
 
-        List<EntityFavorite> favorites = favoriteRepository.findByUser(user, pageRequest);
+        PageRequest pageRequest = PageRequest.of(page - 1, PAGE_SIZE, Sort.by("favoriteId").descending());
 
-        List<FavoriteResponseDTO> list = new ArrayList<>();
-        for (EntityFavorite favorite : favorites) {
-            FavoriteResponseDTO dto = FavoriteResponseDTO.builder()
-                    .favorite(favorite)
-                    .option(optionRepository.findByProductId(favorite.getFproduct().getFproduct_id()))
-                    .build();
+        List<EntityFavorite> favorites = favoriteRepository.findByUser_UserEmail(userEmail, pageRequest);
 
-            list.add(dto);
-        }
+        List<FavoriteResponseDTO> responseDTOList = favorites.stream()
+                .map(favorite -> FavoriteResponseDTO.builder()
+                        .favorite(favorite)
+                        .option(optionRepository.findByProductId(favorite.getFproduct().getFproduct_id()))
+                        .build())
+                .collect(Collectors.toList());
 
-        int totalNum = favoriteRepository.countByUser(user);
+        int totalNum = favoriteRepository.countByUser_UserEmail(userEmail);
 
         return FavoriteListResponseDTO.builder()
-                .list(list)
+                .list(responseDTOList)
                 .totalNum(totalNum)
                 .build();
     }
