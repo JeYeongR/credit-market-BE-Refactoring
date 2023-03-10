@@ -24,8 +24,9 @@ public class FavorController {
 
     @GetMapping("/favor/{page}")
     public ResponseEntity<FavoriteListResponseDTO> selectFavoriteList(@PathVariable int page, Authentication authentication) {
-        FavoriteListResponseDTO favoriteList = favorService.selectFavoriteList(page, authentication.getName());
+        String userEmail = authentication.getName();
+        FavoriteListResponseDTO favoriteList = favorService.selectFavoriteList(page, userEmail);
 
-        return ResponseEntity.ok().body(favoriteList);
+        return ResponseEntity.ok(favoriteList);
     }
 }
