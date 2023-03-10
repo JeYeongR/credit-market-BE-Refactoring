@@ -12,12 +12,12 @@ import java.util.List;
 @Repository
 public interface FavoriteRepository extends JpaRepository<EntityFavorite, Long> {
 
-    List<EntityFavorite> findByUser(EntityUser user, Pageable pageable);
+    List<EntityFavorite> findByUser_UserEmail(String userEmail, Pageable pageable);
 
     boolean existsByUserAndFproduct(EntityUser user, EntityFProduct fproduct);
 
     EntityFavorite findByUserAndFproduct(EntityUser user, EntityFProduct fproduct);
 
-    int countByUser(EntityUser user);
+    int countByUser_UserEmail(String userEmail);
 }
 
