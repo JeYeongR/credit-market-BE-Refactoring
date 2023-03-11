@@ -3,11 +3,11 @@ package com.example.creditmarket.dto.request;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.List;
+import javax.validation.constraints.NotBlank;
 
 @Getter
 @Setter
-public class OrderSaveRequestDTO {
+public class OrderAddRequestDTO {
 
     List<String> productIds;
 

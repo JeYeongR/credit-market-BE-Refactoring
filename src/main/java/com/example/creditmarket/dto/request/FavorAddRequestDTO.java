@@ -7,7 +7,7 @@ import javax.validation.constraints.NotBlank;
 
 @Setter
 @Getter
-public class AddRequestDTO {
+public class FavorAddRequestDTO {
 
     @NotBlank
     private String productId;

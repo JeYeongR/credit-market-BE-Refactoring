@@ -5,9 +5,11 @@ import lombok.Setter;
 
 import javax.validation.constraints.NotBlank;
 
-@Getter
 @Setter
-public class UserSendMailRequestDTO {
+@Getter
+public class CartAddRequestDTO {
 
-    private String userEmail;
+    @NotBlank
+    private String productId;
+
 }
