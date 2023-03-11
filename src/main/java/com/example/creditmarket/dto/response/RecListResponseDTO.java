@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 @Data
-public class RecommendResponseDTO {
+public class RecListResponseDTO {
 
     private String productId;
 
@@ -27,7 +27,7 @@ public class RecommendResponseDTO {
 
     private boolean favorite;
 
-    public RecommendResponseDTO(EntityFProduct product, EntityOption option){
+    public RecListResponseDTO(EntityFProduct product, EntityOption option){
         this.productId = product.getFproduct_id();
         this.companyName = product.getFproduct_company_name();
         this.productName = product.getFproduct_name();
@@ -36,7 +36,7 @@ public class RecommendResponseDTO {
         this.avgInterest = option.getOptions_crdt_grad_avg();
     }
 
-    public RecommendResponseDTO(EntityFProduct product, EntityOption option, boolean favorite){
+    public RecListResponseDTO(EntityFProduct product, EntityOption option, boolean favorite){
         this.productId = product.getFproduct_id();
         this.companyName = product.getFproduct_company_name();
         this.productName = product.getFproduct_name();

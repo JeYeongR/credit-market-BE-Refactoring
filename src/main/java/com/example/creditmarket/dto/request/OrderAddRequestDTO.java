@@ -5,11 +5,11 @@ import lombok.Setter;
 
 import javax.validation.constraints.NotBlank;
 
-@Setter
 @Getter
-public class AddRequestDTO {
+@Setter
+public class OrderAddRequestDTO {
 
     @NotBlank
-    private String productId;
+    String productId;
 
 }

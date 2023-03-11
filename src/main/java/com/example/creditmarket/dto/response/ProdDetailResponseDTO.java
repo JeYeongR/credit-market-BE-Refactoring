@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 @Data
-public class ProductDetailResponseDTO {
+public class ProdDetailResponseDTO {
     //상품명, 개요, 대상, 한도, 금리 등의 상세정보 출력
 
     private String productId;
@@ -23,7 +23,7 @@ public class ProductDetailResponseDTO {
     private String optionsInterestType; //금리 구분
     private String productJoinMethod;
 
-    public ProductDetailResponseDTO(EntityFProduct entity, EntityOption option, boolean isFavorite) {
+    public ProdDetailResponseDTO(EntityFProduct entity, EntityOption option, boolean isFavorite) {
         this.companyName = entity.getFproduct_company_name();
         this.productId = entity.getFproduct_id();
         this.productTypeName = entity.getFproduct_credit_product_type_name();
