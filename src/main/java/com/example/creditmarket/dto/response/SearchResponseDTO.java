@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class MainListResponseDTO {
+public class SearchResponseDTO {
     private String companyName; // 은행
     private String productName; // 대출 상품
     private String productTypeName; // 대출 종류

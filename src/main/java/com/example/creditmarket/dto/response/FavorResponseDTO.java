@@ -8,7 +8,7 @@ import lombok.ToString;
 
 @Getter
 @ToString
-public class FavoriteResponseDTO {
+public class FavorResponseDTO {
 
     private Long favoriteId;
 
@@ -25,7 +25,7 @@ public class FavoriteResponseDTO {
     private String optionsInterestType;
 
     @Builder
-    public FavoriteResponseDTO(EntityFavorite favorite, EntityOption option) {
+    public FavorResponseDTO(EntityFavorite favorite, EntityOption option) {
         this.favoriteId = favorite.getFavoriteId();
         this.companyName = favorite.getFproduct().getFproduct_company_name();
         this.productName = favorite.getFproduct().getFproduct_name();

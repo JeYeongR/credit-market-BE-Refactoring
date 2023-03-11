@@ -6,13 +6,13 @@ import lombok.Getter;
 import java.util.List;
 
 @Getter
-public class FavoriteListResponseDTO {
+public class FavorListResponseDTO {
 
-    private List<FavoriteResponseDTO> list;
+    private List<FavorResponseDTO> list;
     private int totalNum;
 
     @Builder
-    public FavoriteListResponseDTO(List<FavoriteResponseDTO> list, int totalNum) {
+    public FavorListResponseDTO(List<FavorResponseDTO> list, int totalNum) {
         this.list = list;
         this.totalNum = totalNum;
     }
