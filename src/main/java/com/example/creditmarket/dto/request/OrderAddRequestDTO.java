@@ -9,6 +9,7 @@ import javax.validation.constraints.NotBlank;
 @Setter
 public class OrderAddRequestDTO {
 
-    List<String> productIds;
+    @NotBlank
+    String productId;
 
 }

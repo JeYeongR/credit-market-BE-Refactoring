@@ -9,5 +9,6 @@ import javax.validation.constraints.NotBlank;
 @Setter
 public class UserSendMailRequestDTO {
 
+    @NotBlank
     private String userEmail;
 }
