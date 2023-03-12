@@ -1,8 +1,8 @@
 package com.example.creditmarket.service.Impl;
 
-import com.example.creditmarket.dto.request.AddRequestDTO;
-import com.example.creditmarket.dto.response.FavoriteListResponseDTO;
-import com.example.creditmarket.dto.response.FavoriteResponseDTO;
+import com.example.creditmarket.dto.request.FavorAddRequestDTO;
+import com.example.creditmarket.dto.response.FavorListResponseDTO;
+import com.example.creditmarket.dto.response.FavorResponseDTO;
 import com.example.creditmarket.entity.EntityFProduct;
 import com.example.creditmarket.entity.EntityFavorite;
 import com.example.creditmarket.entity.EntityUser;
@@ -33,11 +33,11 @@ public class FavorServiceImpl implements FavorService {
     private final FProductRespository productRepository;
 
     @Override
-    public String toggleFavorite(AddRequestDTO addRequestDTO, String userEmail) {
+    public String toggleFavorite(FavorAddRequestDTO favorAddRequestDTO, String userEmail) {
         EntityUser user = userRepository.findById(userEmail)
                 .orElseThrow(() -> new AppException(ErrorCode.USERMAIL_NOT_FOUND));
 
-        EntityFProduct product = productRepository.findById(addRequestDTO.getProductId())
+        EntityFProduct product = productRepository.findById(favorAddRequestDTO.getProductId())
                 .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
 
         EntityFavorite favorite = favoriteRepository.findByUserAndFproduct(user, product);
@@ -54,7 +54,7 @@ public class FavorServiceImpl implements FavorService {
     }
 
     @Override
-    public FavoriteListResponseDTO selectFavoriteList(int page, String userEmail) {
+    public FavorListResponseDTO selectFavoriteList(int page, String userEmail) {
         final int PAGE_SIZE = 10;
 
         if (page < 1) {
@@ -65,8 +65,8 @@ public class FavorServiceImpl implements FavorService {
 
         List<EntityFavorite> favorites = favoriteRepository.findByUser_UserEmail(userEmail, pageRequest);
 
-        List<FavoriteResponseDTO> responseDTOList = favorites.stream()
-                .map(favorite -> FavoriteResponseDTO.builder()
+        List<FavorResponseDTO> responseDTOList = favorites.stream()
+                .map(favorite -> FavorResponseDTO.builder()
                         .favorite(favorite)
                         .option(optionRepository.findByProductId(favorite.getFproduct().getFproduct_id()))
                         .build())
@@ -74,7 +74,7 @@ public class FavorServiceImpl implements FavorService {
 
         int totalNum = favoriteRepository.countByUser_UserEmail(userEmail);
 
-        return FavoriteListResponseDTO.builder()
+        return FavorListResponseDTO.builder()
                 .list(responseDTOList)
                 .totalNum(totalNum)
                 .build();
