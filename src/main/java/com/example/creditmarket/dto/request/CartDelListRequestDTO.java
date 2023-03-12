@@ -4,6 +4,7 @@ import com.example.creditmarket.entity.EntityCart;
 import lombok.Getter;
 import lombok.Setter;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -13,6 +14,7 @@ import java.util.stream.Collectors;
 public class CartDelListRequestDTO {
 
     @NotNull
+    @Valid
     private List<CartDeleteRequestDTO> cartIds;
 
     public List<EntityCart> toEntity() {
