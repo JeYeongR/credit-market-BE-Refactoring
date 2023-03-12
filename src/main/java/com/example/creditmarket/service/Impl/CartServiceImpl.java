@@ -1,7 +1,7 @@
 package com.example.creditmarket.service.Impl;
 
-import com.example.creditmarket.dto.request.CartDeleteRequestDTO;
-import com.example.creditmarket.dto.request.AddRequestDTO;
+import com.example.creditmarket.dto.request.CartAddRequestDTO;
+import com.example.creditmarket.dto.request.CartDelListRequestDTO;
 import com.example.creditmarket.dto.response.CartResponseDTO;
 import com.example.creditmarket.entity.EntityCart;
 import com.example.creditmarket.entity.EntityFProduct;
@@ -31,11 +31,11 @@ public class CartServiceImpl implements CartService {
     private final FavoriteRepository favoriteRepository;
 
     @Override
-    public String addCart(AddRequestDTO addRequestDTO, String userEmail) {
+    public String addCart(CartAddRequestDTO cartAddRequestDTO, String userEmail) {
         EntityUser user = userRepository.findById(userEmail)
                 .orElseThrow(() -> new AppException(ErrorCode.USERMAIL_NOT_FOUND));
 
-        EntityFProduct fProduct = fProductRespository.findById(addRequestDTO.getProductId())
+        EntityFProduct fProduct = fProductRespository.findById(cartAddRequestDTO.getProductId())
                 .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
 
         if (cartRepository.existsByUserAndFproduct(user, fProduct)) {
@@ -60,11 +60,11 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
-    public String deleteCart(CartDeleteRequestDTO cartDeleteRequestDTO, String userEmail) {
+    public String deleteCart(CartDelListRequestDTO cartDelListRequestDTO, String userEmail) {
         EntityUser user = userRepository.findById(userEmail)
                 .orElseThrow(() -> new AppException(ErrorCode.USERMAIL_NOT_FOUND));
 
-        List<EntityCart> cartList = cartDeleteRequestDTO.toEntity();
+        List<EntityCart> cartList = cartDelListRequestDTO.toEntity();
 
         cartList.forEach(cart -> cartRepository.findByUserAndCartId(user, cart.getCartId())
                 .orElseThrow(() -> new AppException(ErrorCode.CART_NOT_FOUND)));

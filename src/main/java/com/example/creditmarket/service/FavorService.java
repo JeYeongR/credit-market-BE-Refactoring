@@ -1,12 +1,12 @@
 package com.example.creditmarket.service;
 
-import com.example.creditmarket.dto.request.AddRequestDTO;
-import com.example.creditmarket.dto.response.FavoriteListResponseDTO;
+import com.example.creditmarket.dto.request.FavorAddRequestDTO;
+import com.example.creditmarket.dto.response.FavorListResponseDTO;
 
 public interface FavorService {
 
-    String toggleFavorite(AddRequestDTO addRequestDTO, String userEmail);
+    String toggleFavorite(FavorAddRequestDTO favorAddRequestDTO, String userEmail);
 
-    FavoriteListResponseDTO selectFavoriteList(int page, String userEmail);
+    FavorListResponseDTO selectFavoriteList(int page, String userEmail);
 
 }
