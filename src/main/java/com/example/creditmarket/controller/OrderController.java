@@ -1,11 +1,10 @@
 package com.example.creditmarket.controller;
 
-import com.example.creditmarket.dto.request.OrderSaveRequestDTO;
+import com.example.creditmarket.dto.request.OrderAddListRequestDTO;
 import com.example.creditmarket.dto.response.OrderListResponseDTO;
-import com.example.creditmarket.dto.response.ProductDetailResponseDTO;
-import com.example.creditmarket.dto.response.RecommendResponseDTO;
+import com.example.creditmarket.dto.response.ProdDetailResponseDTO;
+import com.example.creditmarket.dto.response.RecListResponseDTO;
 import com.example.creditmarket.service.OrderService;
-import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -13,20 +12,21 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
-@Api(tags = {"상품 서비스"}, description = "상품 상세페이지, 주문, 추천 상품, 상품 찜하기 기능을 담당합니다.")
 public class OrderController {
 
     private final OrderService orderService;
 
-    @ApiOperation(value = "상품 구매", notes = "상품을 구매(신청)합니다.")
     @PostMapping("/order")
-    public String buyProduct(@RequestBody OrderSaveRequestDTO requestDTO, Authentication authentication) {
+    public ResponseEntity<String> buyProduct(@RequestBody @Valid OrderAddListRequestDTO orderAddListRequestDTO, Authentication authentication) {
         String userEmail = authentication.getName();
-        return orderService.buyProduct(requestDTO, userEmail);
+        String result = orderService.buyProduct(orderAddListRequestDTO, userEmail);
+
+        return ResponseEntity.ok(result);
     }
 
     @GetMapping("/order/{page}")
