@@ -31,9 +31,10 @@ public class OrderController {
 
     @GetMapping("/order/{page}")
     public ResponseEntity<OrderListResponseDTO> selectOrderList(@PathVariable int page, Authentication authentication) {
-        OrderListResponseDTO orderList = orderService.selectOrderList(page, authentication.getName());
+        String userEmail = authentication.getName();
+        OrderListResponseDTO orderList = orderService.selectOrderList(page, userEmail);
 
-        return ResponseEntity.ok().body(orderList);
+        return ResponseEntity.ok(orderList);
     }
 
     @PatchMapping("/order/{orderId}")
