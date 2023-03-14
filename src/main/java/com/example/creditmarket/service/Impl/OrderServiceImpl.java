@@ -66,30 +66,27 @@ public class OrderServiceImpl implements OrderService {
     }
 
     public OrderListResponseDTO selectOrderList(int page, String userEmail) {
-        EntityUser user = userRepository.findById(userEmail)
-                .orElseThrow(() -> new AppException(ErrorCode.USERMAIL_NOT_FOUND));
+        final int PAGE_SIZE = 10;
 
         if (page < 1) {
             throw new AppException(ErrorCode.PAGE_INDEX_ZERO);
         }
-        PageRequest pageRequest = PageRequest.of(page - 1, 10, Sort.by("orderId").descending());
 
-        List<EntityOrder> orders = orderRepository.findByUser(user, pageRequest);
+        PageRequest pageRequest = PageRequest.of(page - 1, PAGE_SIZE, Sort.by("orderId").descending());
 
-        List<OrderResponseDTO> list = new ArrayList<>();
-        for (EntityOrder order : orders) {
-            OrderResponseDTO dto = OrderResponseDTO.builder()
-                    .order(order)
-                    .option(optionRepository.findByProductId(order.getFproduct().getFproduct_id()))
-                    .build();
+        List<EntityOrder> orders = orderRepository.findByUser_UserEmail(userEmail, pageRequest);
 
-            list.add(dto);
-        }
+        List<OrderResponseDTO> responseDTOList = orders.stream()
+                .map(order -> OrderResponseDTO.builder()
+                        .order(order)
+                        .option(optionRepository.findByProductId(order.getFproduct().getFproduct_id()))
+                        .build())
+                .collect(Collectors.toList());
 
-        int totalNum = orderRepository.countByUser(user);
+        int totalNum = orderRepository.countByUser_UserEmail(userEmail);
 
         return OrderListResponseDTO.builder()
-                .list(list)
+                .list(responseDTOList)
                 .totalNum(totalNum)
                 .build();
     }
